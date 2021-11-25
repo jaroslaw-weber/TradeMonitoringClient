@@ -5,4 +5,5 @@
     <RootNamespace>stock_price_app_client</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'stock-price-app-client' " />
 </Project>

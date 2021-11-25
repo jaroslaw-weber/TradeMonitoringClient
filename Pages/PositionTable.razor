@@ -1,0 +1,69 @@
+﻿@page "/"
+
+@using stock_price_app_client.Data;
+@using Microsoft.Extensions.Logging;
+@inject PositionDataService ForecastService;
+@inject ILogger<PositionTable> logger;
+
+<h1>Live Prices of Securities</h1>
+
+<p>The data is updated every second.</p>
+
+@if (forecasts == null)
+{
+<p><em>Loading...</em></p>
+}
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>Position Id</th>
+            <th>Ticker</th>
+            <th>Spot Price</th>
+            <th>Qty [T-1]</th>
+            <th>Qty [T-0]</th>
+            <th>Qty change</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var forecast in forecasts)
+        {
+        <tr>
+            <td>@forecast.PositionId</td>
+            <td>@forecast.Ticker</td>
+            <td>@forecast.SpotPrice</td>
+            <td>@forecast.DayStartPosition</td>
+            <td>@forecast.LivePosition</td>
+            <td>@forecast.ChangeToday</td>
+        </tr>
+}
+    </tbody>
+</table>}
+
+@code
+{
+    private PositionData[] forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.ForecastService.Logger = this.logger;
+        this.ForecastService.OnDataReceived = OnDataReceivedFromServer;
+
+        await this.ForecastService.ConnectToServer();
+        this.ForecastService.StartLoop();
+
+    }
+    private async void OnDataReceivedFromServer(PositionData[] newData)
+    {
+        this.forecasts = newData;
+
+        logger.LogInformation("updating view");
+
+        //workaround:
+        //StateHasChanged has to be called with InvokeAsync
+        //if not, it will block (only in callback
+        await InvokeAsync(this.StateHasChanged);
+    }
+}
+    
