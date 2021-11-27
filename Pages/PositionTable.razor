@@ -1,6 +1,6 @@
 ﻿@page "/"
 
-@using stock_price_app_client.Data;
+@using TradeMonitoringClient.Data;
 @using Microsoft.Extensions.Logging;
 @inject PositionDataService ForecastService;
 @inject ILogger<PositionTable> logger;
@@ -9,7 +9,9 @@
 
 <p>The data is updated every second.</p>
 
-@if (forecasts == null)
+<p>Last update: @timestamp</p>
+
+@if (data == null)
 {
 <p><em>Loading...</em></p>
 }
@@ -27,15 +29,15 @@ else
         </tr>
     </thead>
     <tbody>
-        @foreach (var forecast in forecasts)
+        @foreach (var position in data.Positions)
         {
         <tr>
-            <td>@forecast.PositionId</td>
-            <td>@forecast.Ticker</td>
-            <td>@forecast.SpotPrice</td>
-            <td>@forecast.DayStartPosition</td>
-            <td>@forecast.LivePosition</td>
-            <td>@forecast.ChangeToday</td>
+            <td>@position.Id</td>
+            <td>@position.Ticker</td>
+            <td>@position.Price</td>
+            <td>@position.DayStartPosition</td>
+            <td>@position.CurrentQuantity</td>
+            <td>@position.ChangeToday</td>
         </tr>
 }
     </tbody>
@@ -43,7 +45,8 @@ else
 
 @code
 {
-    private PositionData[] forecasts;
+    private PositionDataMessage data;
+    private string timestamp;
 
     protected override async Task OnInitializedAsync()
     {
@@ -54,9 +57,13 @@ else
         this.ForecastService.StartLoop();
 
     }
-    private async void OnDataReceivedFromServer(PositionData[] newData)
+    private async void OnDataReceivedFromServer(PositionDataMessage newData)
     {
-        this.forecasts = newData;
+        this.data = newData;
+
+        //convert timestamp to string and cache to improve performance
+        timestamp = newData.Timestamp.ToString();
+
 
         logger.LogInformation("updating view");
 

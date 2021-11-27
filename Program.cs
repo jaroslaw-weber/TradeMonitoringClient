@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace stock_price_app_client
+namespace TradeMonitoringClient
 {
     public class Program
     {

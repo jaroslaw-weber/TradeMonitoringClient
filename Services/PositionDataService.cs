@@ -4,11 +4,12 @@ using System;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace stock_price_app_client.Data
+namespace TradeMonitoringClient.Data
 {
     public class PositionDataService
     {
@@ -20,14 +21,14 @@ namespace stock_price_app_client.Data
 
         public ILogger Logger { get; set; }
 
-        public System.Action<PositionData[]> OnDataReceived { get; set; }
+        public System.Action<PositionDataMessage> OnDataReceived { get; set; }
 
         public async Task ConnectToServer()
         {
             if (webSocket != null) return;
             webSocket = new ClientWebSocket();
             disposalTokenSource =  new CancellationTokenSource();
-            await webSocket.ConnectAsync(new Uri("ws://localhost:5295/securities-list"), disposalTokenSource.Token);
+            await webSocket.ConnectAsync(new Uri("ws://localhost:5295/position-list"), disposalTokenSource.Token);
             Logger.LogInformation("connected to server!");
 
         }
@@ -50,10 +51,8 @@ namespace stock_price_app_client.Data
                 var received = await webSocket.ReceiveAsync(buffer, disposalTokenSource.Token);
                 var receivedAsText = Encoding.UTF8.GetString(buffer.Array, 0, received.Count);
                 Logger.LogInformation("new message!:"+receivedAsText);
-                var p = new PositionData();
-                p.Ticker = receivedAsText;
-                var l = new PositionData[] { p };
-                OnDataReceived(l);
+                var parsed = JsonSerializer.Deserialize<PositionDataMessage>(receivedAsText);
+                OnDataReceived(parsed);
                 Logger.LogInformation("loop to next...");
                 
                 

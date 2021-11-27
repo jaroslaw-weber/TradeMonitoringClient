@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using stock_price_app_client.Data;
+using TradeMonitoringClient.Data;
 
-namespace stock_price_app_client
+namespace TradeMonitoringClient
 {
     public class Startup
     {

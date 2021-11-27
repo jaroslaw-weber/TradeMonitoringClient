@@ -1,17 +1,17 @@
-using System;
-
-namespace stock_price_app_client.Data
+namespace TradeMonitoringClient.Data
 {
+    //TODO share this data class with server
+
     /// <summary>
     /// Data containing info about security position
     /// </summary>
     public class PositionData
     {
-        public int PositionId { get; set; }
+        public int Id { get; set; }
 
         public string Ticker { get; set; }
 
-        public int SpotPrice { get; set; }
+        public int Price { get; set; }
 
         /// <summary>
         /// Qty [T-1]
@@ -21,7 +21,7 @@ namespace stock_price_app_client.Data
         /// <summary>
         /// Qty [T-0]
         /// </summary>
-        public int LivePosition { get; set; }
+        public int CurrentQuantity { get; set; }
         /// <summary>
         /// Qty change
         /// Difference between live position and position at the start of the day
