@@ -2,6 +2,9 @@
 
 Connect to server monitoring trades of securities (server-side) and displays data as a website. When connected by websocket to server, the server will push update every second.
 
+## Preview
+
+![preview gif loading...](showcase.gif)
 
 ### How to run
 
