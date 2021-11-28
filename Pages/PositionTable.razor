@@ -5,18 +5,18 @@
 @inject PositionDataService PositionDataService;
 @inject ILogger<PositionTable> logger;
 
-<h1>Position Monitoring - current price and quantity</h1>
+<h1>Position Monitoring</h1>
 
+<p>Current price and quantity.</p>
 <p>The data is updated every second.</p>
 
 
 @if (data == null)
 {
-    <p><em>Loading...</em></p>
-}
+<p><em>Loading...</em></p> }
 else
 {
-    <div>
+<div>
 
     <p>Last update: @data.TimestampString</p>
     <table class="table">
@@ -32,24 +32,22 @@ else
         </thead>
         <tbody>
             @foreach (var position in data.Positions)
-                {
-                    <tr>
-                        <td>@position.Id</td>
-                        <td>@position.Ticker</td>
-                        <td>@position.Price</td>
-                        <td>@position.DayStartQuantity</td>
-                        <td>@position.CurrentQuantity</td>
-                        <td style="color:@position.Color">@position.ChangeToday</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-}
+            {
+<tr>
+    <td>@position.Id</td>
+    <td>@position.Ticker</td>
+    <td>@position.Price</td>
+    <td>@position.DayStartQuantity</td>
+    <td>@position.CurrentQuantity</td>
+    <td style="color:@position.Color">@position.ChangeToday</td>
+</tr>
+           }
+        </tbody>
+    </table>
+</div>}
 
 @code
-{
-    private PositionDataMessage data = null;
+{ private PositionDataMessage data = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -72,5 +70,4 @@ else
         //StateHasChanged has to be called with InvokeAsync
         //if not, it will block (only in callback
         await InvokeAsync(this.StateHasChanged);
-    } 
-}
+    } }
