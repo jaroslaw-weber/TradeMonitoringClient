@@ -51,6 +51,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        //todo removing the event from handler with -= OnDataReceivedFromServer;
         this.PositionDataService.OnDataReceived += OnDataReceivedFromServer;
 
         //if loop is not running then start
