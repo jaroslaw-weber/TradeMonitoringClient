@@ -32,6 +32,7 @@ namespace TradeMonitoringClient.Data
             Ticker,
             Quantity,
             StartQuantity,
+            QuantityTraded,
             Change
         }
 
@@ -74,6 +75,9 @@ namespace TradeMonitoringClient.Data
                     break;
                 case PositionSortType.StartQuantity:
                     result = positions.OrderBy(x => x.DayStartQuantity);
+                    break;
+                case PositionSortType.QuantityTraded:
+                    result = positions.OrderBy(x => x.QuantityTraded);
                     break;
                 case PositionSortType.Change:
                     result = positions.OrderBy(x => x.ChangeToday);

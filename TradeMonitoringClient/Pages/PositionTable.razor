@@ -28,20 +28,22 @@ else
                 <th>Spot Price</th>
                 <th @onclick="SortByStartQuantity">Qty [T-1]</th>
                 <th @onclick="SortByQuantity">Qty [T-0]</th>
-                <th @onclick="SortByChange" >Qty change</th>
+                <th @onclick="SortByChange">Qty change</th>
+                <th @onclick="SortByQuantityTraded">Qty traded</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var position in model.SortedPositions)
             {
-<tr>
-    <td>@position.Id</td>
-    <td>@position.Ticker</td>
-    <td>@position.Price</td>
-    <td>@position.DayStartQuantity</td>
-    <td>@position.CurrentQuantity</td>
-    <td style="color:@position.Color">@position.ChangeToday</td>
-</tr>}
+            <tr>
+                <td>@position.Id</td>
+                <td>@position.Ticker</td>
+                <td>@position.Price</td>
+                <td>@position.DayStartQuantity</td>
+                <td>@position.CurrentQuantity</td>
+                <td style="color:@position.Color">@position.ChangeToday</td>
+                <td>@position.QuantityTraded</td>
+            </tr>}
         </tbody>
     </table>
 </div>}
@@ -86,5 +88,6 @@ else
     private void SortById() => model.SortBy(PositionTablePageModel.PositionSortType.Id);
     private void SortByTicker() => model.SortBy(PositionTablePageModel.PositionSortType.Ticker);
     private void SortByQuantity() => model.SortBy(PositionTablePageModel.PositionSortType.Quantity);
+    private void SortByQuantityTraded() => model.SortBy(PositionTablePageModel.PositionSortType.QuantityTraded);
     private void SortByStartQuantity() => model.SortBy(PositionTablePageModel.PositionSortType.StartQuantity);
     private void SortByChange() => model.SortBy(PositionTablePageModel.PositionSortType.Change); }

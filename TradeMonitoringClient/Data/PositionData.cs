@@ -11,17 +11,29 @@ namespace TradeMonitoringClient.Data
 
         public string Ticker { get; set; }
 
+        /// <summary>
+        /// Current price
+        /// </summary>
         public int Price { get; set; }
 
         /// <summary>
         /// Qty [T-1]
-        /// position at the start of the day
+        /// How many shares had at the start of the day
         /// </summary>
         public int DayStartQuantity { get; set; }
+
         /// <summary>
         /// Qty [T-0]
+        /// How many shares have
         /// </summary>
         public int CurrentQuantity { get; set; }
+
+        /// <summary>
+        /// Qty Traded
+        /// How many shares were sold/bought
+        /// </summary>
+        public int QuantityTraded { get; set; }
+
         /// <summary>
         /// Qty change
         /// Difference between live position and position at the start of the day
