@@ -27,7 +27,7 @@ namespace TradeMonitoringClient
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<PositionDataService>();
+            services.AddSingleton<PositionTableService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -2,7 +2,7 @@
 
 @using TradeMonitoringClient.Data;
 @using Microsoft.Extensions.Logging;
-@inject PositionDataService PositionDataService;
+@inject PositionTableService PositionTableService;
 @inject ILogger<PositionTable> logger;
 
 <h1>Position Monitoring</h1>
@@ -53,13 +53,13 @@ else
     protected override async Task OnInitializedAsync()
     {
         //todo removing the event from handler with -= OnDataReceivedFromServer;
-        this.PositionDataService.OnDataReceived += OnDataReceivedFromServer;
+        this.PositionTableService.OnDataReceived += OnDataReceivedFromServer;
 
         //if loop is not running then start
-        if (this.PositionDataService.IsRunning) return;
-        this.PositionDataService.Logger = this.logger;
-        await this.PositionDataService.ConnectToServer();
-        this.PositionDataService.StartListeningToWebsocket();
+        if (this.PositionTableService.IsRunning) return;
+        this.PositionTableService.Logger = this.logger;
+        await this.PositionTableService.ConnectToServer();
+        this.PositionTableService.StartListeningToWebsocket();
 
     }
 
