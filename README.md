@@ -11,8 +11,9 @@ dotnet run watch
 
 ### Multiple instances
 You can run the app and open multiple tabs. Data will be shared between them.
-```
+
 ### How to run tests
+
 ```
 dotnet test
 ```
