@@ -9,6 +9,7 @@
 
 <p>Current price and quantity.</p>
 <p>The data is updated every second.</p>
+<p>Click on column to sort. (click twice for descending sort)</p>
 
 
 @if (model.Data == null)
@@ -22,16 +23,16 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>Position Id</th>
-                <th>Ticker</th>
+                <th @onclick="SortById">Position Id</th>
+                <th @onclick="SortByTicker">Ticker</th>
                 <th>Spot Price</th>
-                <th>Qty [T-1]</th>
-                <th>Qty [T-0]</th>
-                <th>Qty change</th>
+                <th @onclick="SortByStartQuantity">Qty [T-1]</th>
+                <th @onclick="SortByQuantity">Qty [T-0]</th>
+                <th @onclick="SortByChange" >Qty change</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var position in model.Data.Positions)
+            @foreach (var position in model.SortedPositions)
             {
 <tr>
     <td>@position.Id</td>
@@ -40,18 +41,18 @@ else
     <td>@position.DayStartQuantity</td>
     <td>@position.CurrentQuantity</td>
     <td style="color:@position.Color">@position.ChangeToday</td>
-</tr>
-           }
+</tr>}
         </tbody>
     </table>
 </div>}
 
 @code
-{
-    private PositionTablePageModel model = new();
+{ private PositionTablePageModel model = new();
 
     protected override async Task OnInitializedAsync()
     {
+        this.model.Logger = logger;
+        this.model.OnRecalculated = ForceRender;
         //todo removing the event from handler with -= OnDataReceivedFromServer;
         this.PositionTableService.OnDataReceived += OnDataReceivedFromServer;
 
@@ -63,15 +64,27 @@ else
 
     }
 
-    private async void OnDataReceivedFromServer(PositionDataMessage newData)
+    private void ForceRender()
     {
-        this.model.OnDataReceived(newData);
+        Task.Run(() => ForceRenderAsync());
+    }
 
-        logger.LogInformation("updating view");
-
+    private async Task ForceRenderAsync()
+    {
         //workaround:
         //StateHasChanged has to be called with InvokeAsync
         //if not, it will block (only in callback
         await InvokeAsync(this.StateHasChanged);
+        logger.LogInformation("updating view");
     }
-}
+
+    private void OnDataReceivedFromServer(PositionDataMessage newData)
+    {
+        this.model.OnDataReceived(newData);
+    }
+
+    private void SortById() => model.SortBy(PositionTablePageModel.PositionSortType.Id);
+    private void SortByTicker() => model.SortBy(PositionTablePageModel.PositionSortType.Ticker);
+    private void SortByQuantity() => model.SortBy(PositionTablePageModel.PositionSortType.Quantity);
+    private void SortByStartQuantity() => model.SortBy(PositionTablePageModel.PositionSortType.StartQuantity);
+    private void SortByChange() => model.SortBy(PositionTablePageModel.PositionSortType.Change); }
