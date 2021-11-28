@@ -53,6 +53,9 @@ namespace TradeMonitoringClient.Data
 
         }
 
+        /// <summary>
+        /// Call this after receiving new data from server
+        /// </summary>
         public void OnDataReceived(PositionDataMessage message)
         {
             this.Data = message;
@@ -95,6 +98,9 @@ namespace TradeMonitoringClient.Data
 
         private bool IsAscendingSort() => CurrentSortDirection == SortDirection.Ascending;
 
+        /// <summary>
+        /// Set sort and recalculate data
+        /// </summary>
         public void SortBy(PositionSortType sortType)
         {
             //if clicked same column just switch direction

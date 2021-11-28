@@ -8,7 +8,6 @@ namespace TradeMonitoringClient.Data
     /// </summary>
     public class PositionDataMessage
     {
-        
         public DateTime Timestamp { get; set; }
         public PositionData[] Positions { get; set; }
     }
