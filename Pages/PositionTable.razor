@@ -2,68 +2,69 @@
 
 @using TradeMonitoringClient.Data;
 @using Microsoft.Extensions.Logging;
-@inject PositionDataService ForecastService;
+@inject PositionDataService PositionDataService;
 @inject ILogger<PositionTable> logger;
 
-<h1>Live Prices of Securities</h1>
+<h1>Position Monitoring - current price and quantity</h1>
 
 <p>The data is updated every second.</p>
 
-<p>Last update: @timestamp</p>
 
 @if (data == null)
 {
-<p><em>Loading...</em></p>
+    <p><em>Loading...</em></p>
 }
 else
 {
-<table class="table">
-    <thead>
-        <tr>
-            <th>Position Id</th>
-            <th>Ticker</th>
-            <th>Spot Price</th>
-            <th>Qty [T-1]</th>
-            <th>Qty [T-0]</th>
-            <th>Qty change</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var position in data.Positions)
-        {
-        <tr>
-            <td>@position.Id</td>
-            <td>@position.Ticker</td>
-            <td>@position.Price</td>
-            <td>@position.DayStartPosition</td>
-            <td>@position.CurrentQuantity</td>
-            <td>@position.ChangeToday</td>
-        </tr>
+    <div>
+
+    <p>Last update: @data.TimestampString</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Position Id</th>
+                <th>Ticker</th>
+                <th>Spot Price</th>
+                <th>Qty [T-1]</th>
+                <th>Qty [T-0]</th>
+                <th>Qty change</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var position in data.Positions)
+                {
+                    <tr>
+                        <td>@position.Id</td>
+                        <td>@position.Ticker</td>
+                        <td>@position.Price</td>
+                        <td>@position.DayStartQuantity</td>
+                        <td>@position.CurrentQuantity</td>
+                        <td style="color:@position.Color">@position.ChangeToday</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
-    </tbody>
-</table>}
 
 @code
 {
-    private PositionDataMessage data;
-    private string timestamp;
+    private PositionDataMessage data = null;
 
     protected override async Task OnInitializedAsync()
     {
-        this.ForecastService.Logger = this.logger;
-        this.ForecastService.OnDataReceived = OnDataReceivedFromServer;
+        this.PositionDataService.Logger = this.logger;
+        this.PositionDataService.OnDataReceived = OnDataReceivedFromServer;
 
-        await this.ForecastService.ConnectToServer();
-        this.ForecastService.StartLoop();
+        await this.PositionDataService.ConnectToServer();
+        this.PositionDataService.StartLoop();
 
     }
+
     private async void OnDataReceivedFromServer(PositionDataMessage newData)
     {
         this.data = newData;
-
-        //convert timestamp to string and cache to improve performance
-        timestamp = newData.Timestamp.ToString();
-
+        data.Recalculate();
 
         logger.LogInformation("updating view");
 
@@ -71,6 +72,5 @@ else
         //StateHasChanged has to be called with InvokeAsync
         //if not, it will block (only in callback
         await InvokeAsync(this.StateHasChanged);
-    }
+    } 
 }
-    
