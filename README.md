@@ -9,6 +9,7 @@ Connect to server monitoring trades of securities (server-side) and displays dat
 ### How to run
 
 ```
+cd TradeMonitoringClient
 dotnet run watch
 ```
 
@@ -23,4 +24,5 @@ dotnet test
 
 ### TODO
 Things I did not have time to implement but could use improvement:
-- unit tests
+- better test coverage
+- reconnect to server after server restart
