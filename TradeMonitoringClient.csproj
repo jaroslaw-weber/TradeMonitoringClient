@@ -5,7 +5,6 @@
     <RootNamespace>TradeMonitoringClient</RootNamespace>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(RunConfiguration)' == 'stock-price-app-client' " />
   <ItemGroup>
     <None Remove="Services\" />
   </ItemGroup>
