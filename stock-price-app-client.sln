@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.810.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradeMonitoringClient", "TradeMonitoringClient\TradeMonitoringClient.csproj", "{580FC74A-F8A6-4BC3-A1B6-35AD39E8C281}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradeMonitoringClient.Tests", "TradeMonitoringClient.Tests\TradeMonitoringClient.Tests.csproj", "{18DB8C56-16DF-4215-861E-C52FA74B9EE6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{580FC74A-F8A6-4BC3-A1B6-35AD39E8C281}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{580FC74A-F8A6-4BC3-A1B6-35AD39E8C281}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{580FC74A-F8A6-4BC3-A1B6-35AD39E8C281}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18DB8C56-16DF-4215-861E-C52FA74B9EE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18DB8C56-16DF-4215-861E-C52FA74B9EE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18DB8C56-16DF-4215-861E-C52FA74B9EE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18DB8C56-16DF-4215-861E-C52FA74B9EE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
