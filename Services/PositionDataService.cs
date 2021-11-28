@@ -13,6 +13,8 @@ namespace TradeMonitoringClient.Data
 {
     public class PositionDataService
     {
+        public bool IsRunning = false;
+
         CancellationTokenSource disposalTokenSource;
 
         ClientWebSocket webSocket;
@@ -21,7 +23,7 @@ namespace TradeMonitoringClient.Data
 
         public ILogger Logger { get; set; }
 
-        public System.Action<PositionDataMessage> OnDataReceived { get; set; }
+        public System.Action<PositionDataMessage> OnDataReceived { get; set; } = p => { };
 
         public async Task ConnectToServer()
         {
@@ -38,6 +40,7 @@ namespace TradeMonitoringClient.Data
             if (this.WebSocketLoop != null) return;
             this.WebSocketLoop = ListenToWebsocket();
             Task.Run(()=>this.WebSocketLoop);
+            IsRunning = true;
         }
 
         public async Task ListenToWebsocket()

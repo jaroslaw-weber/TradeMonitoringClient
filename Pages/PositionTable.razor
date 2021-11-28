@@ -51,9 +51,11 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        this.PositionDataService.Logger = this.logger;
-        this.PositionDataService.OnDataReceived = OnDataReceivedFromServer;
+        this.PositionDataService.OnDataReceived += OnDataReceivedFromServer;
 
+        //if loop is not running then start
+        if (this.PositionDataService.IsRunning) return;
+        this.PositionDataService.Logger = this.logger;
         await this.PositionDataService.ConnectToServer();
         this.PositionDataService.StartLoop();
 

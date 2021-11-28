@@ -9,11 +9,8 @@ Connect to server monitoring trades of securities (server-side) and displays dat
 dotnet run watch
 ```
 
-### How to run second instance
-You can run multiple instances on same computer (need to switch ports).
-Open second terminal and run this command:
-```
-dotnet run watch --urls=http://localhost:5001/
+### Multiple instances
+You can run the app and open multiple tabs. Data will be shared between them.
 ```
 ### How to run tests
 ```
