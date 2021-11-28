@@ -49,7 +49,7 @@ namespace TradeMonitoringClient.Data
             TimestampString = Data.Timestamp.ToString();
             this.SortedPositions = Sort().ToArray();
             //Logger.LogInformation("sorted: "+SortedPositions.Select(x => x.Id.ToString()).Aggregate((a, b) => a + "," + b));
-            OnRecalculated();
+            OnRecalculated?.Invoke();
 
         }
 
@@ -62,7 +62,7 @@ namespace TradeMonitoringClient.Data
 
         private IEnumerable<PositionData> Sort()
         {
-            Logger.LogInformation("sorting...");
+            Logger?.LogInformation("sorting...");
             IEnumerable<PositionData> result = null;
             var positions = Data.Positions;
             switch (this.CurrentSortType)
@@ -108,7 +108,7 @@ namespace TradeMonitoringClient.Data
             {
                 CurrentSortType = sortType;
             }
-            Logger.LogInformation("current sort: " + CurrentSortType);
+            Logger?.LogInformation("current sort: " + CurrentSortType);
             Recalculate();
         }
     }
