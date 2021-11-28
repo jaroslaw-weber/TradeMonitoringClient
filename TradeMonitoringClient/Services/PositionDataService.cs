@@ -11,6 +11,9 @@ using Microsoft.Extensions.Logging;
 
 namespace TradeMonitoringClient.Data
 {
+    /// <summary>
+    /// Connecting to server through websockets, listening to server and receiving data.
+    /// </summary>
     public class PositionDataService
     {
         public bool IsRunning = false;
@@ -19,7 +22,6 @@ namespace TradeMonitoringClient.Data
 
         ClientWebSocket webSocket;
 
-        public Task WebSocketLoop { get; set; }
 
         public ILogger Logger { get; set; }
 
@@ -27,7 +29,6 @@ namespace TradeMonitoringClient.Data
 
         public async Task ConnectToServer()
         {
-            if (webSocket != null) return;
             webSocket = new ClientWebSocket();
             disposalTokenSource =  new CancellationTokenSource();
             await webSocket.ConnectAsync(new Uri("ws://localhost:5295/position-list"), disposalTokenSource.Token);
@@ -35,12 +36,10 @@ namespace TradeMonitoringClient.Data
 
         }
 
-        public void StartLoop()
-        { 
-            if (this.WebSocketLoop != null) return;
-            this.WebSocketLoop = ListenToWebsocket();
-            Task.Run(()=>this.WebSocketLoop);
+        public void StartListeningToWebsocket()
+        {
             IsRunning = true;
+            Task.Run(() => this.ListenToWebsocket());
         }
 
         public async Task ListenToWebsocket()
@@ -48,7 +47,7 @@ namespace TradeMonitoringClient.Data
             Logger.LogInformation("start listening...");
             var buffer = new ArraySegment<byte>(new byte[1024]);
             //while (!disposalTokenSource.IsCancellationRequested)
-            while (true)
+            while (IsRunning)
             {
                 Logger.LogInformation("waiting for new message...");
                 var received = await webSocket.ReceiveAsync(buffer, disposalTokenSource.Token);
@@ -60,6 +59,11 @@ namespace TradeMonitoringClient.Data
                 
                 
             }
+        }
+
+        public void Stop()
+        {
+            this.IsRunning = false;
         }
     }
 }

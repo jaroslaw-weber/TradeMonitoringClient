@@ -11,14 +11,14 @@
 <p>The data is updated every second.</p>
 
 
-@if (data == null)
+@if (model.Data == null)
 {
 <p><em>Loading...</em></p> }
 else
 {
 <div>
 
-    <p>Last update: @data.TimestampString</p>
+    <p>Last update: @model.TimestampString</p>
     <table class="table">
         <thead>
             <tr>
@@ -31,7 +31,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var position in data.Positions)
+            @foreach (var position in model.Data.Positions)
             {
 <tr>
     <td>@position.Id</td>
@@ -47,7 +47,8 @@ else
 </div>}
 
 @code
-{ private PositionDataMessage data = null;
+{
+    private PositionTablePageModel model = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,14 +59,13 @@ else
         if (this.PositionDataService.IsRunning) return;
         this.PositionDataService.Logger = this.logger;
         await this.PositionDataService.ConnectToServer();
-        this.PositionDataService.StartLoop();
+        this.PositionDataService.StartListeningToWebsocket();
 
     }
 
     private async void OnDataReceivedFromServer(PositionDataMessage newData)
     {
-        this.data = newData;
-        data.Recalculate();
+        this.model.OnDataReceived(newData);
 
         logger.LogInformation("updating view");
 
