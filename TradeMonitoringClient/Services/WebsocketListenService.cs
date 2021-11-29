@@ -79,8 +79,8 @@ namespace TradeMonitoringClient.Data
             while (IsRunning)
             {
                 Logger.LogInformation("waiting for new message...");
-                var buffer = new ArraySegment<byte>(new Byte[8192]);
 
+                var buffer = new ArraySegment<byte>(new Byte[8192]);
 
                 WebSocketReceiveResult result = null;
                 string message = null;
@@ -110,27 +110,11 @@ namespace TradeMonitoringClient.Data
                 }
                 catch(Exception e)
                 {
-                    Logger.LogCritical("failed getting message: "+e);
+                    Logger.LogCritical("failed getting message: " + e);
                 }
-                /*
-
-                bool endOfMessage = false;
-                int offset = 0;
-                var free = buffer.Length;
-                //if message is splitted, loop until you got whole message
-                while (!endOfMessage)
-                {
-                    WebSocketReceiveResult received = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer, offset, free), token.Token);
-                    offset += result.Count;
-                    free -= result.Count;
-                    endOfMessage = received.EndOfMessage;
-                }
-
-                */
-
-                //string message = GetWebsocketMessage(buffer);
 
                 Logger.LogInformation("new message!:" + message);
+
                 TMessage parsed = null;
                 try
                 {
@@ -140,6 +124,7 @@ namespace TradeMonitoringClient.Data
                 {
                     Logger.LogCritical("deserialization failed: " + e.ToString());
                 }
+
                 Logger.LogInformation("deserialized");
 
                 OnDataReceived(parsed);
@@ -147,7 +132,6 @@ namespace TradeMonitoringClient.Data
 
             }
         }
-
 
         private static string GetWebsocketMessage(ArraySegment<byte> buffer)
         {
