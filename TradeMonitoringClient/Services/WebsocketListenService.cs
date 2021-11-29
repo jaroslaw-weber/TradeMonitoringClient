@@ -46,7 +46,7 @@ namespace TradeMonitoringClient.Data
         /// <summary>
         /// Server port
         /// </summary>
-        private int port = 5295;
+        private int port = 6000;
 
         public async Task ConnectToServer()
         {
