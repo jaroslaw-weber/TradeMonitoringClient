@@ -8,9 +8,11 @@
   <ItemGroup>
     <None Remove="Services\" />
     <None Remove="Messages\" />
+    <None Remove="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="Messages\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
 </Project>

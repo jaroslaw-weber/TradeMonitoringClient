@@ -1,12 +1,15 @@
 ﻿using TradeMonitoringClient.Data;
 
-/// <summary>
-/// Receiving position list from server
-/// </summary>
-public class PositionTableService : WebsocketListenService<PositionDataMessage>
+namespace TradeMonitoringClient
 {
-    public PositionTableService()
+    /// <summary>
+    /// Receiving position list from server
+    /// </summary>
+    public class PositionTableService : WebsocketListenService<PositionDataMessage>
     {
-        this.Endpoint = "position-list";
+        public PositionTableService()
+        {
+            this.Endpoint = "positions";
+        }
     }
 }

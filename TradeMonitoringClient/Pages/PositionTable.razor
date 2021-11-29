@@ -66,6 +66,11 @@ else
 
     }
 
+    public void Dispose() => PositionTableService.Stop();
+
+    /// <summary>
+    /// Update view when data has changed
+    /// </summary>
     private void ForceRender()
     {
         Task.Run(() => ForceRenderAsync());
@@ -73,9 +78,8 @@ else
 
     private async Task ForceRenderAsync()
     {
-        //workaround:
         //StateHasChanged has to be called with InvokeAsync
-        //if not, it will block (only in callback
+        //if not, it will block the main thread (only in callback)
         await InvokeAsync(this.StateHasChanged);
         logger.LogInformation("updating view");
     }

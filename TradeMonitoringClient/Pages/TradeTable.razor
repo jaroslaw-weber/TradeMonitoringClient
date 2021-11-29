@@ -1,0 +1,87 @@
+﻿@page "/trades"
+
+@using TradeMonitoringClient.Data;
+@using Microsoft.Extensions.Logging;
+@inject TradeTableService TradeTableService;
+@inject ILogger<TradeTable> logger;
+
+<h1>Trade Monitoring</h1>
+
+<p>History of trades.</p>
+<p>The data is updated every second.</p>
+
+
+@if (model.Data == null)
+{
+<p><em>Loading...</em></p> }
+else
+{
+<div>
+
+    <p>Last update: @model.TimestampString</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Trade Id</th>
+                <th>Ticker</th>
+                <th>Quantity</th>
+                <th>Trade Type</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var trade in model.Data.Trades)
+            {
+            <tr>
+                <td>@trade.Id</td>
+                <td>@trade.Ticker</td>
+                <td>@trade.Quantity</td>
+                <td>@trade.TradeType</td>
+                <td>@trade.TimestampString</td>
+            </tr>}
+        </tbody>
+    </table>
+</div>}
+
+@code
+{
+    private TradeTablePageModel model = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.model.Logger = logger;
+        this.model.OnRecalculated = ForceRender;
+        //todo removing the event from handler with -= OnDataReceivedFromServer;
+        this.TradeTableService.OnDataReceived += OnDataReceivedFromServer;
+
+        //if loop is not running then start
+        if (this.TradeTableService.IsRunning) return;
+        this.TradeTableService.Logger = this.logger;
+        await this.TradeTableService.ConnectToServer();
+        this.TradeTableService.StartListeningToWebsocket();
+
+    }
+
+    /// <summary>
+    /// Update view when data has changed
+    /// </summary>
+    private void ForceRender()
+    {
+        Task.Run(() => ForceRenderAsync());
+    }
+
+    private async Task ForceRenderAsync()
+    {
+        //StateHasChanged has to be called with InvokeAsync
+        //if not, it will block the main thread (only in callback)
+        await InvokeAsync(this.StateHasChanged);
+        logger.LogInformation("updating view");
+    }
+
+    private void OnDataReceivedFromServer(TradeDataMessage newData)
+    {
+        this.model.OnDataReceived(newData);
+    }
+
+
+}

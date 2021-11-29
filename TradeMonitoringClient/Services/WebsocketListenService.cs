@@ -1,6 +1,7 @@
 
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
@@ -16,7 +17,7 @@ namespace TradeMonitoringClient.Data
     /// Connecting to server through websockets, listening to server and receiving data.
     /// Each API should inherit this class
     /// </summary>
-    public abstract class WebsocketListenService<TMessage>
+    public abstract class WebsocketListenService<TMessage> where TMessage: class
     {
         /// <summary>
         /// Is connected to websocket and waiting for the messages?
@@ -64,6 +65,7 @@ namespace TradeMonitoringClient.Data
         {
             Logger.LogInformation("start listening...");
             IsRunning = true;
+            //Run loop without blocking main thread.
             Task.Run(() => this.ListenToWebsocket());
         }
 
@@ -71,35 +73,85 @@ namespace TradeMonitoringClient.Data
         /// Listening to server messages through websockets
         /// </summary>
 
-        public async Task ListenToWebsocket()
+        private async Task ListenToWebsocket()
         {
-            var buffer = GetBuffer();
             //while (!disposalTokenSource.IsCancellationRequested)
             while (IsRunning)
             {
                 Logger.LogInformation("waiting for new message...");
+                var buffer = new ArraySegment<byte>(new Byte[8192]);
 
-                WebSocketReceiveResult received = await webSocket.ReceiveAsync(buffer, token.Token);
 
-                string message = GetWebsocketMessage(buffer, received);
+                WebSocketReceiveResult result = null;
+                string message = null;
+                try
+                {
+                    //message may be split in chunks
+                    //need to wait for the end of message
+
+                    using (var memory = new MemoryStream())
+                    {
+
+                        while (true)
+                        {
+                            result = await webSocket.ReceiveAsync(buffer, CancellationToken.None);
+                            memory.Write(buffer.Array, buffer.Offset, result.Count);
+                            if (result.EndOfMessage) break;
+                        }
+
+                        memory.Seek(0, SeekOrigin.Begin);
+
+                        using (var reader = new StreamReader(memory, Encoding.UTF8))
+                        {
+                            message = reader.ReadToEnd();
+                        }
+
+                    }
+                }
+                catch(Exception e)
+                {
+                    Logger.LogCritical("failed getting message: "+e);
+                }
+                /*
+
+                bool endOfMessage = false;
+                int offset = 0;
+                var free = buffer.Length;
+                //if message is splitted, loop until you got whole message
+                while (!endOfMessage)
+                {
+                    WebSocketReceiveResult received = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer, offset, free), token.Token);
+                    offset += result.Count;
+                    free -= result.Count;
+                    endOfMessage = received.EndOfMessage;
+                }
+
+                */
+
+                //string message = GetWebsocketMessage(buffer);
 
                 Logger.LogInformation("new message!:" + message);
-
-                var parsed = JsonSerializer.Deserialize<TMessage>(message);
+                TMessage parsed = null;
+                try
+                {
+                    parsed = JsonSerializer.Deserialize<TMessage>(message);
+                }
+                catch (Exception e)
+                {
+                    Logger.LogCritical("deserialization failed: " + e.ToString());
+                }
+                Logger.LogInformation("deserialized");
 
                 OnDataReceived(parsed);
+               
 
             }
         }
 
-        private static ArraySegment<byte> GetBuffer()
-        {
-            return new ArraySegment<byte>(new byte[1024]);
-        }
 
-        private static string GetWebsocketMessage(ArraySegment<byte> buffer, WebSocketReceiveResult received)
+        private static string GetWebsocketMessage(ArraySegment<byte> buffer)
         {
-            return Encoding.UTF8.GetString(buffer.Array, 0, received.Count);
+            return Encoding.UTF8.GetString(buffer.Array, 0, buffer.Offset);
         }
 
         public void Stop()

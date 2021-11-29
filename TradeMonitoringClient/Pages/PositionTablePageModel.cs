@@ -48,7 +48,7 @@ namespace TradeMonitoringClient.Data
             }
             TimestampString = Data.Timestamp.ToString();
             this.SortedPositions = Sort().ToArray();
-            //Logger.LogInformation("sorted: "+SortedPositions.Select(x => x.Id.ToString()).Aggregate((a, b) => a + "," + b));
+
             OnRecalculated?.Invoke();
 
         }

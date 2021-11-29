@@ -1,12 +1,14 @@
 namespace TradeMonitoringClient.Data
 {
-    //TODO share this data class with server
 
     /// <summary>
     /// Data containing info about security/position
+    /// Warning: setters must be public for JSON to be deserialized
     /// </summary>
     public class PositionData
     {
+        //TODO same as server code. reuse some data classes between server and client
+
         public int Id { get; set; }
 
         public string Ticker { get; set; }
